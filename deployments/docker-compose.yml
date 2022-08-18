@@ -1,0 +1,34 @@
+version: "3.0"
+
+networks:
+  alterconso-reminder:
+
+services:
+  alterconso-reminder:
+    container_name: alterconso-reminder
+    image: alterconso-reminder:latest
+    ports:
+      - 8010:8010
+      - 8090:8090
+    volumes:
+      - ./../:/application
+    networks:
+      - alterconso-reminder
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mariadb:
+    image: mariadb:10.5.1
+    hostname: db.alterconso.local
+    environment:
+      MYSQL_DATABASE: alterconso
+      MYSQL_ROOT_PASSWORD: alterconsoroot
+      MYSQL_USER: alterconso
+      MYSQL_PASSWORD: alterconso
+    ports:
+      - 3306:3306
+    networks:
+      - alterconso-reminder
